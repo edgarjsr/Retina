@@ -1,0 +1,10 @@
+program
+ with
+ 	number a;
+    do
+        for i from 1 to 100 do
+            forward(i,2,3,2);
+            rotater(90);
+        end;
+    end;
+end;

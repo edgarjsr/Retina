@@ -1,0 +1,83 @@
+#! /usr/bin/ruby
+#  Etapa 1 - Analizador Lexicográfico para el lenguaje Retina
+#   Alumnos: Johanny Prado 11-10801
+#            Edgar Silva   11-10968
+# Fecha Ultima modificacion: 12/02/2017
+
+require_relative 'retina_lexer'
+require './retina_parser.rb'
+
+def main
+  #  Chequeamos la extension del archivo
+  errores = false
+  good = []
+  bad = []
+  lineaG = []
+  lineaB = []
+  columnG = []
+  columnB = []
+
+  puts ARGV[0]
+  puts ARGV[1]
+  ARGV[0] =~ /\w+\.rtn/
+  if $&.nil?; puts "Unknown file extension"; return; end
+  # Abrimos el archivo como un arreglo de strings
+  begin
+    input = File::readlines(ARGV[0])
+    lineas = input.count
+  rescue
+    puts "File not found"
+    return
+  end
+  # creamos el lexer
+  for  i in 0..lineas-1
+      
+    lexer = Lexer.new input[i]
+    begin
+      while lexer.catch_lexeme; end
+
+      # Almacenamos informacion relevante
+      if  lexer.inesperado.empty?
+        if errores == false
+          lexer.tokens.each { |t| good << t.idAndValue[1] }
+          lexer.tokens.each { |t| lineaG << i+1} 
+          lexer.colG_array.each { |c| columnG << c }
+        end
+      else
+        errores = true
+        lexer.inesperado.each { |t| bad << t}
+        lexer.inesperado.each { |t| lineaB << i+1}
+        lexer.colB_array.each { |c| columnB << c }
+      end
+    end
+    i=i+1
+  end
+
+  if errores == true
+    for i in 0 .. bad.size - 1
+      puts "linea #{lineaB[i]}, columna #{columnB[i]}, #{bad[i]} "
+    end
+ # else
+ #   for i in 0 .. good.size - 1
+ #     puts "linea #{lineaG[i]}, columna #{columnG[i]}, #{good[i]} "
+ #   end
+  end
+  bueno = good.join(' ') 
+  puts "ESTO ES BUENO #{bueno}"
+ begin
+    #puts "Lo que hay en good: #{good}"
+    lexer = Lexer.new bueno
+    puts "Hola, estoy despues de crear el lexer"
+    parser = Parser.new
+    puts "Hola, estoy despues de crear el parser"
+    ast = parser.parse lexer
+    ast.print_ast
+    puts "Esto no va a aparecer"
+    rescue SyntacticError => e
+    puts e
+    return
+end
+
+end
+
+main
