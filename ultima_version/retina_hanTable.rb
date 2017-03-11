@@ -78,7 +78,7 @@ def firm_Handler(firma)
 end
 
 #Manejador para el bloque de instrucciones
-def bloqInstr_Handler(bloque)
+def bloqInstr_Handler(bloque) 
 	#Manejo de la estructura.
 	declError = 0
 	if (bloque.decla_list != nil)
@@ -240,15 +240,15 @@ def listId_Handler(type, listI)
 
     if !($symTable.contains(listI.var))
 		$symTable.insert(listI.var, [type, nil])
-		if (listI.listI != nil)
-			return listId_Handler(type, listI.listI)
+		if (listI.list_id != nil)                       # Cambie .listI por .list_id
+			return listId_Handler(type, listI.list_id)  # Cambie .listI por .list_id
 		end
 		return 0
 	else
 		puts "ERROR: variable '#{listI.var}' was declared before" \
 				" at the same scope."
-		if (listI.listI != nil)
-			return listId_Handler(type, listI.listI) + 1
+		if (listI.list_id != nil)                           # Cambie .listI por .list_id
+			return listId_Handler(type, listI.list_id) + 1  # Cambie .listI por .list_id
 		end
 		return 1
 	end
@@ -286,6 +286,30 @@ def expr_Handler(type,expr)
 
 end
 
+def listArg_Handler(list_Arg)
+	typeError =  type_Handler(list_Arg.tipo)
+
+	listArgError = 0
+	if (list_Arg.list_Arg != nil)
+		listArgError = listArg_Handler(list_Arg.list_Arg)
+	end
+
+	return typeError + listArgError
+end
+
+
+def type_Handler(type)
+	error = 1
+	if (type == :Number)
+		error = 0
+	elsif (type == :Bool)
+		error = 0
+	else
+		puts "ERROR: unknown type: #{type}."
+	end
+
+	return error
+end
 
 
 ################################################################################################################################################################################################################################################

@@ -133,7 +133,7 @@ end
 
 		# Var: Variable
         Var
-        : Identifier                                   {result = Term.new(:IDENTIFIER , val[0])}
+        : Identifier                                   {result = Term.new(:Identifier , val[0])}
         ;       
 		
 		# Asig: Asignaciones
